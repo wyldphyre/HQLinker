@@ -47,12 +47,21 @@ namespace HQLinker
 
       this.ClipboardNotification = new ClipboardNotification();
       ClipboardNotification.ClipboardUpdate += ClipboardNotification_ClipboardUpdate;
+      IconText = "Monitoring clipboard";
+    }
+    private void StopMonitoring()
+    {
+      this.ClipboardNotification = null;
+
+      Monitoring = false;
+      SetIconImage(HQLinker.Properties.Resources.LinkBroken16x16);
+      IconText = "Not monitoring clipboard";
     }
     void ClipboardNotification_ClipboardUpdate(object sender, EventArgs e)
     {
       if (Clipboard.ContainsText())
       {
-        var Text = Clipboard.GetText();
+        var Text = Clipboard.GetText().Trim();
         if (Text != LastText)
         {
           LastText = Text;
@@ -76,18 +85,11 @@ namespace HQLinker
           }
 
           if (AppName != "HQClient")
-            System.Diagnostics.Process.Start(Text); 
+            System.Diagnostics.Process.Start(Text);
         }
       }
     }
-    private void StopMonitoring()
-    {
-      this.ClipboardNotification = null;
-
-      Monitoring = false;
-      SetIconImage(HQLinker.Properties.Resources.LinkBroken16x16);
-    }
-
+    
     private void HQLinkerApplicationContext_ContextMenuOpeningEvent(object sender, System.ComponentModel.CancelEventArgs e)
     {
     }

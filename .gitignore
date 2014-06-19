@@ -34,3 +34,8 @@ Icon
 # Files that might appear on external disk
 .Spotlight-V100
 .Trashes
+
+bin/Debug/HQLinker.exe
+obj/Debug/HQLinker.exe
+obj/Debug/HQLinker.exe
+bin/Debug/HQLinker.exe
