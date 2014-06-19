@@ -28,13 +28,11 @@ namespace HQLinker
 
       StartMonitoring();
     }
-
     private void ExitMenuItemClick(object sender, EventArgs e)
     {
       StopMonitoring();
       ExitApplication();
     }
-
     private void ToggleMonitoring()
     {
       if (Monitoring)
@@ -50,7 +48,6 @@ namespace HQLinker
       this.ClipboardNotification = new ClipboardNotification();
       ClipboardNotification.ClipboardUpdate += ClipboardNotification_ClipboardUpdate;
     }
-
     void ClipboardNotification_ClipboardUpdate(object sender, EventArgs e)
     {
       if (Clipboard.ContainsText())
@@ -58,11 +55,16 @@ namespace HQLinker
         var Text = Clipboard.GetText();
         if (Text != LastText)
         {
+          LastText = Text;
+
           IntPtr OwnerWindowHandle = GetClipboardOwner();
           var AppName = "";
 
           if (!Text.StartsWith("hq://"))
-            return;
+            return; // Not a HQ link
+
+          if (!Process.GetProcessesByName("HQClient").Any())
+            return; // HQClient isn't running
 
           if (OwnerWindowHandle != IntPtr.Zero)
           {
@@ -74,9 +76,7 @@ namespace HQLinker
           }
 
           if (AppName != "HQClient")
-            System.Diagnostics.Process.Start(Text);
-          
-          LastText = Text;
+            System.Diagnostics.Process.Start(Text); 
         }
       }
     }
