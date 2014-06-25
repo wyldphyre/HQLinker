@@ -26,7 +26,8 @@ $RECYCLE.BIN/
 .LSOverride
 
 # Icon must ends with two \r.
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -35,8 +36,6 @@ Icon
 .Spotlight-V100
 .Trashes
 
-bin/Debug/HQLinker.exe
-obj/Debug/HQLinker.exe
-obj/Debug/HQLinker.exe
-bin/Debug/HQLinker.exe
+bin/
+obj/
 *.exe
