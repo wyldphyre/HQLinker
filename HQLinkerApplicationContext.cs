@@ -18,6 +18,38 @@ namespace HQLinker
     [DllImport("user32.dll")]
     static extern bool SetForegroundWindow(IntPtr hWnd);
 
+    [DllImport("user32.dll")]
+    public static extern int SetActiveWindow(int hwnd);
+
+    [DllImport("user32.dll")]
+    static extern bool ShowWindow(IntPtr hWnd, ShowWindowEnum flags);
+
+    [DllImport("user32.dll")]
+    static extern bool ShowWindowAsync(IntPtr hWnd, ShowWindowEnum flags);
+    
+    private enum ShowWindowEnum
+    {
+      Hide = 0,
+      ShowNormal = 1, ShowMinimized = 2, ShowMaximized = 3,
+      Maximize = 3, ShowNormalNoActivate = 4, Show = 5,
+      Minimize = 6, ShowMinNoActivate = 7, ShowNoActivate = 8,
+      Restore = 9, ShowDefault = 10, ForceMinimized = 11
+    };
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    static extern bool GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+
+    private struct WINDOWPLACEMENT
+    {
+      public int length;
+      public int flags;
+      public int showCmd;
+      public System.Drawing.Point ptMinPosition;
+      public System.Drawing.Point ptMaxPosition;
+      public System.Drawing.Rectangle rcNormalPosition;
+    }
+
     public HQLinkerApplicationContext() : base()
     {
       base.IconDoubleClickEvent += HQLinkerApplicationContext_IconDoubleClickEvent;
@@ -28,6 +60,40 @@ namespace HQLinker
 
     private void Initialise()
     {
+      FocusHQTimer = new Timer();
+      FocusHQTimer.Interval = 500;
+      FocusHQTimer.Tick += (Sender, Args) =>
+      {
+        FocusHQTimer.Stop();
+
+        var HqProcess = Process.GetProcessesByName("HQClient").FirstOrDefault();
+        if (HqProcess != null)
+        {
+          WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
+          GetWindowPlacement(HqProcess.MainWindowHandle, ref placement);
+
+          switch (placement.showCmd)
+          {
+            case 1: // Normal
+            case 3: // Maximized
+              ShowWindow(HqProcess.MainWindowHandle, ShowWindowEnum.Show);
+              break;
+            case 0: // Hide
+            case 2: // ShowMinimized
+            case 7: // ShowMinNoActive
+              ShowWindow(HqProcess.MainWindowHandle, ShowWindowEnum.Restore);
+              break;
+
+            default:
+              ShowWindow(HqProcess.MainWindowHandle, ShowWindowEnum.Show);
+              break;
+          }
+
+          //SetActiveWindow((int)HqProcess.MainWindowHandle);
+          SetForegroundWindow(HqProcess.MainWindowHandle);
+        }
+      };
+
       AddMenuItem("Exit", null, ExitMenuItemClick);
 
       StartMonitoring();
@@ -92,9 +158,8 @@ namespace HQLinker
           {
             System.Diagnostics.Process.Start(Text);
 
-            var HqProcess = Process.GetProcessesByName("HQClient").FirstOrDefault();
-            if (HqProcess != null)
-              SetForegroundWindow(HqProcess.MainWindowHandle);
+            FocusHQTimer.Stop();
+            FocusHQTimer.Start();
           }
         }
       }
@@ -111,6 +176,7 @@ namespace HQLinker
     private bool Monitoring;
     private ClipboardNotification ClipboardNotification;
     private string LastText;
+    private Timer FocusHQTimer;
   }
 
   /// <summary>
