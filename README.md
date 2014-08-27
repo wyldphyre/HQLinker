@@ -13,4 +13,5 @@ This is a simple application that sits in the Windows system tray and monitors t
 - Optionally play a sound when a link is detected and executed
 - Ask the user for confirmation as to whether or not to keep monitoring the application the link was copied from.
 - Provide a UI for enabling or disabling monitoring of the various applications that links have been detected being copied from.
+- Maybe start the HQ client if it isn't already running?
 
