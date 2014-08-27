@@ -12,7 +12,11 @@ namespace HQLinker
 {
   class HQLinkerApplicationContext : SystemTrayApplicationContext
   {
-    [DllImport("user32.dll")] static extern IntPtr GetClipboardOwner();
+    [DllImport("user32.dll")] 
+    static extern IntPtr GetClipboardOwner();
+    
+    [DllImport("user32.dll")]
+    static extern bool SetForegroundWindow(IntPtr hWnd);
 
     public HQLinkerApplicationContext() : base()
     {
@@ -85,7 +89,13 @@ namespace HQLinker
           }
 
           if (AppName != "HQClient")
+          {
             System.Diagnostics.Process.Start(Text);
+
+            var HqProcess = Process.GetProcessesByName("HQClient").FirstOrDefault();
+            if (HqProcess != null)
+              SetForegroundWindow(HqProcess.MainWindowHandle);
+          }
         }
       }
     }
