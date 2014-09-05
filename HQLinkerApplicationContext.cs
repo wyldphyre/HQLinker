@@ -74,13 +74,13 @@ namespace HQLinker
 
           switch (placement.showCmd)
           {
-            case 1: // Normal
-            case 3: // Maximized
+            case (int)ShowWindowEnum.ShowNormal: // Normal
+            case (int)ShowWindowEnum.Maximize: // Maximized
               ShowWindow(HqProcess.MainWindowHandle, ShowWindowEnum.Show);
               break;
-            case 0: // Hide
-            case 2: // ShowMinimized
-            case 7: // ShowMinNoActive
+            case (int)ShowWindowEnum.Hide: // Hide
+            case (int)ShowWindowEnum.ShowMinimized: // ShowMinimized
+            case (int)ShowWindowEnum.ShowMinNoActivate: // ShowMinNoActive
               ShowWindow(HqProcess.MainWindowHandle, ShowWindowEnum.Restore);
               break;
 
