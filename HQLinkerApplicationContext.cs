@@ -139,7 +139,7 @@ namespace HQLinker
           IntPtr OwnerWindowHandle = GetClipboardOwner();
           var AppName = "";
 
-          if (!Text.StartsWith("hq://"))
+          if (!Text.StartsWith("hq://") && !Text.Contains(" "))
             return; // Not a HQ link
 
           if (!Process.GetProcessesByName("HQClient").Any())
