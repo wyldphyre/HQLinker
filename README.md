@@ -8,6 +8,7 @@ Detects HQ links on the clipboard and opens them in HQ.
 This is a simple application that sits in the Windows system tray and monitors the clipboard for hq:// links that are copied. From it then tries to execute the url as if the user had clicked on the link. If HQ is installed correctly then the link should open in HQ.
 
 ## Possible Future Features
+- Maybe show a slide in notification when a link is detected, which the user can click on to trigger opening the link.
 - Add an option to disable bringing HQ to the front when a link is triggered
 - Add enabling/disabling of monitoring from the popup menu
 - Optionally play a sound when a link is detected and executed
