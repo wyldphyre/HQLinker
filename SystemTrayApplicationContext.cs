@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace HQLinker
 {
   class SystemTrayApplicationContext : ApplicationContext
   {
+    private System.ComponentModel.Container components;
+
     public SystemTrayApplicationContext()
     {
       components = new System.ComponentModel.Container();
@@ -20,12 +19,13 @@ namespace HQLinker
       };
       notifyIcon.ContextMenuStrip.Opening += ContextMenuStrip_Opening;
       notifyIcon.DoubleClick += notifyIcon_DoubleClick;
-      notifyIcon.Click += notifyIcon_Click;
+      notifyIcon.MouseUp += notifyIcon_MouseUp;
     }
 
     public event Action IconClickEvent;
     public event Action IconDoubleClickEvent;
     public event System.ComponentModel.CancelEventHandler ContextMenuOpeningEvent;
+    public NotifyIcon notifyIcon { get; private set; }
 
     public string IconText
     {
@@ -69,9 +69,9 @@ namespace HQLinker
       base.ExitThreadCore();
     }
 
-    private void notifyIcon_Click(object sender, EventArgs e)
+    void notifyIcon_MouseUp(object sender, MouseEventArgs e)
     {
-      if (IconClickEvent != null)
+      if (e.Button == MouseButtons.Left && IconClickEvent != null)
         IconClickEvent();
     }
     private void notifyIcon_DoubleClick(object sender, EventArgs e)
@@ -84,9 +84,5 @@ namespace HQLinker
       if (ContextMenuOpeningEvent != null)
         ContextMenuOpeningEvent(sender, e);
     }
-
-
-    private System.ComponentModel.Container components;
-    private NotifyIcon notifyIcon;
   }
 }
