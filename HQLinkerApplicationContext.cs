@@ -60,8 +60,10 @@ namespace HQLinker
 
     private void Initialise()
     {
-      FocusHQTimer = new Timer();
-      FocusHQTimer.Interval = 500;
+      FocusHQTimer = new Timer
+      {
+        Interval = 500
+      };
       FocusHQTimer.Tick += (Sender, Args) =>
       {
         FocusHQTimer.Stop();
@@ -189,7 +191,7 @@ namespace HQLinker
     /// </summary>
     public static event EventHandler ClipboardUpdate;
 
-    private static NotificationForm _form = new NotificationForm();
+    private static readonly NotificationForm _form = new NotificationForm();
 
     /// <summary>
     /// Raises the <see cref="ClipboardUpdate"/> event.
@@ -197,11 +199,7 @@ namespace HQLinker
     /// <param name="e">Event arguments for the event.</param>
     private static void OnClipboardUpdate(EventArgs e)
     {
-      var handler = ClipboardUpdate;
-      if (handler != null)
-      {
-        handler(null, e);
-      }
+      ClipboardUpdate?.Invoke(null, e);
     }
 
     /// <summary>
@@ -219,7 +217,7 @@ namespace HQLinker
       {
         if (m.Msg == NativeMethods.WM_CLIPBOARDUPDATE)
         {
-            OnClipboardUpdate(null);
+          OnClipboardUpdate(null);
         }
         base.WndProc(ref m);
       }
@@ -243,7 +241,7 @@ namespace HQLinker
     public static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
   }
 
-  class win32
+  class Win32
   {
     [DllImport("user32")]
     private static extern UInt32 GetWindowThreadProcessId(
@@ -253,14 +251,12 @@ namespace HQLinker
 
     public static Int32 GetWindowProcessID(Int32 hwnd)
     {
-      Int32 pid = 1;
-      GetWindowThreadProcessId(hwnd, out pid);
+      GetWindowThreadProcessId(hwnd, out int pid);
       return pid;
     }
 
-    public win32()
+    public Win32()
     {
-
     }
   }
 }
