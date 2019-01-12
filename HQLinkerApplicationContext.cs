@@ -139,26 +139,31 @@ namespace HQLinker
           LastText = Text;
 
           IntPtr OwnerWindowHandle = GetClipboardOwner();
-          var AppName = "";
+          var ClipboardOwnerAppName = string.Empty;
 
           if (!Text.StartsWith("hq://") || Text.Contains(" "))
             return; // Not a HQ link
 
           if (!Process.GetProcessesByName("HQClient").Any())
+          {
+            LastText = string.Empty; // Forget the text so the user can open HQ and try again
+            notifyIcon.ShowBalloonTip(5000, "Cannot open HQ link", "The HQ client isn't running", ToolTipIcon.Warning);
             return; // HQClient isn't running
+          }
 
           if (OwnerWindowHandle != IntPtr.Zero)
           {
             unsafe
             {
-              var ProcessId = win32.GetWindowProcessID((int)OwnerWindowHandle.ToPointer());
-              AppName = Process.GetProcessById(ProcessId).ProcessName;
+              var ProcessId = Win32.GetWindowProcessID((int)OwnerWindowHandle.ToPointer());
+              ClipboardOwnerAppName = Process.GetProcessById(ProcessId).ProcessName;
             }
           }
 
-          if (AppName != "HQClient")
+          if (ClipboardOwnerAppName != "HQClient") // if the app putting the link on the clipboard isn't HQ itself, proceed
           {
             System.Diagnostics.Process.Start(Text);
+            notifyIcon.ShowBalloonTip(5000, "HQ link detected on clipboard", "The link has been opened in HQ", ToolTipIcon.Info);
 
             FocusHQTimer.Stop();
             FocusHQTimer.Start();
